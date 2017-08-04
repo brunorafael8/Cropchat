@@ -23,7 +23,23 @@
     methods: {
       displayDetails (id) {
         this.$router.push({name: 'detail', params: { id: id }})
+      },
+      getCats () {
+        if (navigator.onLine) {
+          this.saveCatsToCache()
+          return this.$root.cat
+        } else {
+          return JSON.parse(localStorage.getItem('cats'))
+        }
+      },
+      saveCatsToCache () {
+        this.$root.$firebaseRefs.cat.once('value', (snapchot) => {
+          localStorage.setItem('cats', JSON.stringify(snapchot.val()))
+        })
       }
+    },
+    mounted () {
+      this.saveCatsToCache()
     }
   }
 </script>
